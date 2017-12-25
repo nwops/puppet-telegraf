@@ -8,7 +8,6 @@ class telegraf::install {
   assert_private()
 
   $_operatingsystem = downcase($::operatingsystem)
-
   if $::telegraf::manage_repo {
     case $::osfamily {
       'Debian': {
@@ -56,7 +55,18 @@ class telegraf::install {
       install_options => $::telegraf::install_options,
     }
   } else {
-    ensure_packages([$::telegraf::package_name], { ensure => $::telegraf::ensure, install_options => $::telegraf::install_options })
-  }
+    if $::telegraf::manage_package {
 
+      wget::fetch { 'telegraf':
+        source      => 'https://dl.influxdata.com/telegraf/releases/telegraf_1.5.0-1_amd64.deb',
+        destination => "/tmp/telegraf_1.5.0-1_amd64.deb"
+      }
+      package { 'telegraf':
+        ensure   => 'present',
+        provider => 'dpkg',
+        source   => "/tmp/telegraf_1.5.0-1_amd64.deb",
+        require  => Wget::Fetch['telegraf'],
+      }
+    }
+  }
 }

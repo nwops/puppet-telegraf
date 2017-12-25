@@ -116,6 +116,7 @@ class telegraf (
   $service_enable         = $telegraf::params::service_enable,
   $service_ensure         = $telegraf::params::service_ensure,
   $install_options        = $telegraf::params::install_options,
+  $manage_package         = true,
 ) inherits ::telegraf::params
 {
 
